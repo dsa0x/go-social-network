@@ -1,0 +1,59 @@
+{{define "_posts"}} {{$loggedInUserID := .User.ID}}
+<div class="md:px-6 p-0 w-full sm:max-w-full flex mb-4 h-full">
+  <div
+    class="bg-gray-200 h-full absolute overflow-hidden md:block sidebar hidden"
+  >
+    <span
+      class="my-2 text-base text-gray-600 px-8 py-4 w-full inline-block text-2xl break-words capitalize"
+      >Welcome, {{.User.Name}}</span
+    >
+    <img
+      class="w-auto h-full object-cover object-left absolute"
+      src="/public/img/guy_standing.svg"
+      alt="Guy"
+    />
+  </div>
+  <div class="w-full sm:w-3/4 bg-gray-100 h-full mx-4 sm:mx-auto md:ml-64">
+    <div class="m-4">{{template "createpost"}}</div>
+    {{if .Posts}} {{range .Posts}}
+
+    <div
+      class="m-4 border border-solid border-gray-400 bg-white rounded-md p-4 flex flex-col justify-between leading-normal"
+    >
+      <div class="details flex">
+        <img
+          class="w-10 h-10 rounded-full mr-4"
+          src="/public/img/profile_pic.svg"
+          alt="Avatar"
+        />
+        <span class="font-bold">{{.Author}}</span>
+        {{if eq $loggedInUserID .CreatedBy }}
+        <form action="" method="post" class="ml-auto cursor-pointer">
+          <input type="hidden" name="postId" value="{{.ID}}" />
+          <a class="">
+            <button type="submit" name="delete" class="w-4 h-4">
+              <img
+                class="w-full h-full"
+                src="/public/img/delete.svg"
+                alt="delete icon"
+              />
+            </button>
+          </a>
+        </form>
+        {{end}}
+      </div>
+      <div class="flex flex-col ml-12">
+        <span>{{.Content}}</span>
+      </div>
+    </div>
+
+    {{end}} {{else}}
+    <div
+      class="m-4 border border-solid border-gray-400 bg-white rounded-md p-4 flex flex-col justify-between leading-normal"
+    >
+      Nothing to see here. Send your first chip dear. Don't be shy :).
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,92 @@
+{{ define "header" }}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/images/favicon.png" type="image/png" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Satisfy"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css" />
+  </head>
+  <body>
+    <nav class="flex items-center justify-between  bg-indigo-500 p-6">
+      <a href="/" class="inline-block flex items-center flex-shrink-0 text-white mr-6">
+        <img class="" src="/public/img/chat_icon.svg" alt="chat icon" />
+        <span class="font-semibold text-xl tracking-tight">Chipper</span>
+      </a>
+    
+      <div class="w-full block flex-grow flex items-center w-auto">
+        <div class="text-base mx-auto items-center">
+         
+          <a
+            href="/"
+            class="block inline-block mt-0 text-indigo-200 hover:text-white mr-4"
+          >
+            Home
+          </a>
+          
+          <!-- <a
+            href="/login"
+            class="block inline-block mt-0 text-indigo-200 hover:text-white mr-4"
+          >
+            Login
+          </a>
+          <a
+          href="/user/1"
+          class="block inline-block mt-0 text-indigo-200 hover:text-white mr-4"
+        >
+          Profile
+        </a> -->
+          {{if not .}}
+          <a
+            href="/login"
+            class="block inline-block mt-0 text-indigo-200 hover:text-white mr-4"
+          >
+            Login
+          </a>
+          {{else}}
+          <a
+          href="{{printf "/%s/%s" "user" . }}"
+          class="block inline-block mt-0 text-indigo-200 hover:text-white mr-4"
+        >
+          Profile
+        </a>
+          {{end}}
+        </div>
+        <!-- <div>
+          <a
+            href="#"
+            class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-indigo-500 hover:bg-white mt-4 lg:mt-0"
+            >Download</a
+          >
+        </div> -->
+      </div>
+    </nav>
+<!-- <main class="sm:mx-32 my-2 h-full "> -->
+<main class="h-full ">
+    {{ end }}
+  </body>
+</html>

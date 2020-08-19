@@ -10,6 +10,9 @@ var APIRouter = mux.NewRouter()
 
 func init() {
 
-	APIRouter.Get("/").HandlerFunc(handler.Home)
+	APIRouter.HandleFunc("/", handler.Auth(handler.Home)).Methods("GET", "POST")
+	// APIRouter.HandleFunc("/", handler.Home).Methods("GET")
+	// APIRouter.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.Dir("../../public"))))
+	// APIRouter.HandleFunc("/logged", handler.Auth(handler.Home)).Methods("GET", "POST")
 
 }

@@ -1,0 +1,6 @@
+{{template "header" .StringID }} {{if and . .User.Name}}
+
+<br />
+{{template "_posts" . }}
+<br />
+{{else}} <span> Welcome, Unknown</span> {{end}} {{template "footer"}}

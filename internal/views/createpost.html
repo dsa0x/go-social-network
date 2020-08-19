@@ -1,0 +1,29 @@
+{{define "createpost"}}
+<form method="post" class="bg-white shadow-md rounded px-8 py-6 my-2">
+  {{if .mismatch}}
+  <div class="mb-4">
+    <p class="text-red-500 text-base">{{.mismatch}}</p>
+  </div>
+  {{end}}
+  <div class="mb-4 flex flex-col items-end">
+    <label
+      for="email"
+      class="block text-gray-700 text-sm font-bold mb-2"
+    ></label>
+
+    <textarea
+      id="chip"
+      name="chip"
+      placeholder="What's on your mind?"
+      class="resize border rounded focus:outline-none focus:shadow-outline w-full min-h-xs p-3"
+    ></textarea>
+    <button
+      value="submit"
+      class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+      type="submit"
+    >
+      Chip Away
+    </button>
+  </div>
+</form>
+{{end}}

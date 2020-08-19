@@ -1,0 +1,62 @@
+{{template "header" .LoggedInUserId }}
+
+<div class="w-full md:max-w-sm lg:max-w-full lg:flex px-6">
+  <div
+    class="relative border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal"
+  >
+    <img
+      class="w-full h-48 object-cover rounded-b lg:rounded-b-none lg:rounded-r"
+      src="/public/img/profile_header.jpg"
+      alt="Profile Header"
+    />
+
+    <div class="flex items-center absolute profile-img w-full">
+      {{if .Avatar}}
+      <img class="w-32 h-32 rounded-full mr-4" src="{{.Avatar}}" alt="Avatar" />
+      {{end}}
+      <div class="text-xl translate-x-10">
+        <p class="text-indigo-100 leading-none">{{ .Username }}</p>
+      </div>
+
+      <div class="profile-stats flex ml-auto text-indigo-100">
+        {{if (and (not .MyProfile) (not .IsFollower)) }}
+        <button
+          class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-semibold py-2 px-4 mr-6 border border-indigo-400 rounded shadow"
+        >
+          {{ $path := printf "%s/%s/%s" "/user" .ID "follow" }}
+          <a href="{{$path}}">Follow</a>
+        </button>
+        {{end}} {{if (and (not .MyProfile) (.IsFollower)) }}
+        <button
+          class="follow-btn bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-semibold py-2 px-4 mr-6 border border-indigo-400 rounded shadow"
+        >
+          {{ $path := printf "%s/%s/%s" "/user" .ID "unfollow" }}
+          <a href="{{$path}}" class="unfollow">Unfollow</a>
+          <a href="{{$path}}">Following</a>
+        </button>
+        {{end}}
+
+        <div
+          class="chits flex flex-col px-4 border-r border-gray-100 border-opacity-50 items-center"
+        >
+          <span>200</span>
+          <span class="text-xs">Chits</span>
+        </div>
+        <div
+          class="followers flex flex-col px-4 border-r border-gray-100 border-opacity-50 items-center"
+        >
+          <span>{{.Followers}}</span>
+          <span class="text-xs">Followers</span>
+        </div>
+        <div class="following flex flex-col px-4 items-center">
+          <span>{{.Following}}</span>
+          <span class="text-xs">Following</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-10">
+  {{template "_posts" . }}
+</div>
+{{template "footer" }}

@@ -1,0 +1,76 @@
+{{template "header" }}
+<div class="w-full max-w-xs m-auto mt-48">
+  <form
+    method="post"
+    class="login bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+  >
+    {{if .mismatch}}
+    <div class="mb-4">
+      <p class="text-red-500 text-base">{{.mismatch}}</p>
+    </div>
+    {{end}}
+    <div class="mb-4">
+      <label for="email" class="block text-gray-700 text-sm font-bold mb-2"
+        >Email</label
+      >
+      {{if .email}}
+      <input
+        type="email"
+        name="email"
+        id="email"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      <p class="text-red-500 text-xs italic">Please choose an email.</p>
+      {{else}}
+      <input
+        type="email"
+        name="email"
+        id="email"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      {{end}}
+    </div>
+
+    <div class="mb-4">
+      <label for="password" class="block text-gray-700 text-sm font-bold mb-2"
+        >Password</label
+      >
+      {{if .password}}
+      <input
+        type="password"
+        name="password"
+        id="password"
+        placeholder="**************"
+        class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      <p class="text-red-500 text-xs italic">Please choose a password.</p>
+      {{else}}
+      <input
+        type="password"
+        name="password"
+        id="password"
+        placeholder="**************"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+      {{end}}
+    </div>
+
+    <div class="flex items-center justify-between">
+      <button
+        value="submit"
+        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit"
+      >
+        Sign In
+      </button>
+      <a
+        class="inline-block align-baseline font-bold text-sm text-indigo-500 hover:text-indigo-800"
+        href="/"
+      >
+        Forgot Password?
+      </a>
+    </div>
+  </form>
+</div>
+
+{{template "footer" }}
