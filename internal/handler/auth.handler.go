@@ -11,6 +11,7 @@ import (
 	"github.com/dsa0x/go-social-network/common"
 	"github.com/dsa0x/go-social-network/internal/config"
 	"github.com/dsa0x/go-social-network/internal/model"
+	"github.com/gorilla/securecookie"
 )
 
 type Credentials struct {
@@ -36,6 +37,8 @@ type ContextKey string
 type Error map[string][]string
 
 var jwtKey = []byte(config.Env.JwtKey)
+var hashKey = []byte(config.Env.HashKey)
+var secureCookie = securecookie.New(hashKey, nil)
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -102,8 +105,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		encoded, err := secureCookie.Encode("session", tokenString)
+		expire := time.Now().Add(24 * time.Hour)
 		cookie := &http.Cookie{
-			Name: "session", Value: tokenString,
+			Name: "session", Value: encoded, HttpOnly: true, Expires: expire,
 		}
 
 		http.SetCookie(w, cookie)
@@ -116,7 +121,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var errs = make(Error)
 	if r.Method == http.MethodPost {
 
@@ -156,19 +160,35 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func Logout(w http.ResponseWriter, r *http.Request) {
+
+	expire := time.Now().Add(-7 * 24 * time.Hour)
+	cookie := &http.Cookie{
+		Name: "session", Value: "", Expires: expire,
+	}
+
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
+
 //Auth authenticate user
 func Auth(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		reqToken, err := r.Cookie("session")
+		cookie, err := r.Cookie("session")
 		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"message": "Invalid Cookies"}`))
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+		var reqToken string
+		if err = secureCookie.Decode("session", cookie.Value, &reqToken); err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		claims := &Claims{}
 
-		token, err := jwt.ParseWithClaims(reqToken.Value, claims, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(reqToken, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if err != nil {

@@ -26,7 +26,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	if user == nil {
 		common.ExecTemplate(w, "index.html", user)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
+		// return
 	}
 	deletePostID := r.FormValue("postId")
 	if user != nil && r.Method == http.MethodPost && deletePostID == "" {
