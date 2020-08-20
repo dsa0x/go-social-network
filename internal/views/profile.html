@@ -1,6 +1,6 @@
 {{template "header" .LoggedInUserId }}
 
-<div class="w-full md:max-w-sm lg:max-w-full lg:flex px-6">
+<div class="w-full lg:max-w-full lg:flex px-6">
   <div
     class="relative border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal"
   >
@@ -39,7 +39,7 @@
         <div
           class="chits flex flex-col px-4 border-r border-gray-100 border-opacity-50 items-center"
         >
-          <span>200</span>
+          <span>{{.PostCount}}</span>
           <span class="text-xs">Chits</span>
         </div>
         <div

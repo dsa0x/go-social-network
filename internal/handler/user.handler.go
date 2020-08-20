@@ -13,33 +13,36 @@ import (
 )
 
 type Profile struct {
-	Username       string
-	ID             string
-	Following      int
-	Followers      int
-	IsFollower     bool
-	Avatar         string
-	MyProfile      bool
-	Posts          []model.Post
-	User           ClaimsCred
-	LoggedInUserId string
+	Username         string
+	ID               string
+	Following        int
+	Followers        int
+	IsFollower       bool
+	Avatar           string
+	MyProfile        bool
+	Posts            []model.Post
+	User             ClaimsCred
+	LoggedInUserId   string
+	LoggedInUsername string
+	PostCount        int
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Println("omg")
+	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// var errs = make(Error)
 
 	const cKey = ContextKey("user")
 	loggedUser := r.Context().Value(cKey)
+
+	fmt.Println(loggedUser, "pp")
 	if loggedUser == nil {
 		common.ExecTemplate(w, "index.html", loggedUser)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		// return
 	}
-
 	params := mux.Vars(r)
 	redirectPath := "/user/" + params["id"]
-	fmt.Println(redirectPath)
 	deletePostID := r.FormValue("postId")
 	if loggedUser != nil && r.Method == http.MethodPost && deletePostID == "" {
 		CreatePost2(w, r, redirectPath, deletePostID)
@@ -88,6 +91,12 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message": "An error occurred"}`))
 		return
 	}
+	count, err := model.CountUserPosts(user.ID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message": "An error occurred"}`))
+		return
+	}
 
 	profile.Following = followings
 	profile.Followers = followers
@@ -100,13 +109,15 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	profile.User.Name = profile.Username
 	profile.User.ID = user.ID
 	profile.LoggedInUserId = strconv.Itoa(int(loggedInUser.ID))
+	profile.LoggedInUsername = loggedInUser.Name
+	profile.PostCount = count
 
-	w.WriteHeader(http.StatusFound)
+	// w.WriteHeader(http.StatusFound)
 	common.ExecTemplate(w, "profile.html", profile)
 
 }
 func FollowUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -119,13 +130,16 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 
 	_, err = model.Follow(user.ID, uint(id))
 	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusNotFound)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(`{"message": "User not found"}`))
 		return
 	}
+	fmt.Println("shitt", r.Method, "/user/"+params["id"])
 	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
-
+	return
 }
+
 func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	params := mux.Vars(r)
@@ -135,7 +149,6 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message": "Bad request"}`))
 		return
 	}
-	fmt.Println(params["id"], "scr")
 	const cKey = ContextKey("user")
 	user := r.Context().Value(cKey).(ClaimsCred)
 
@@ -145,6 +158,8 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message": "User not found"}`))
 		return
 	}
-	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
 
+	fmt.Println("/user/"+params["id"], "hi")
+	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
+	return
 }

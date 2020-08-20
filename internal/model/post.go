@@ -64,6 +64,7 @@ func FetchPosts(posts *[]Post) error {
 
 	return nil
 }
+
 func FetchUserPosts(posts *[]Post, userID uint) error {
 	allPosts := Db.Model(&Post{}).Order("created_at desc").Find(&posts, "created_by = ?", userID)
 	if allPosts.Error != nil {
@@ -72,4 +73,14 @@ func FetchUserPosts(posts *[]Post, userID uint) error {
 	}
 
 	return nil
+}
+func CountUserPosts(userID uint) (int, error) {
+	var count int
+	allPosts := Db.Model(&Post{}).Where("created_by = ?", userID).Count(&count)
+	if allPosts.Error != nil {
+		log.Println(allPosts.Error)
+		return count, allPosts.Error
+	}
+
+	return count, nil
 }

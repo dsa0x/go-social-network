@@ -9,14 +9,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "Laykay66@!"
-	dbname   = "social_network"
-)
-
 // DB returns the database object
 func DB() *gorm.DB {
 

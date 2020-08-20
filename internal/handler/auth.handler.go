@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -44,38 +45,36 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	var errs = make(Error)
+	fmt.Println(r.Method)
 
 	if r.Method == http.MethodPost {
 		creds := Credentials{}
 		email := r.FormValue("email")
 		password := r.FormValue("password")
-		creds.Email = email
+		creds.Email = strings.ToLower(email)
 		creds.Password = password
 
 		if err := common.Validate(creds); err != nil {
-			// message, _ := json.Marshal(err)
 			w.WriteHeader(http.StatusBadRequest)
-			// w.Write(message)
-			// errs = err
+			log.Println(err, "::Validation failed")
+			errs["mismatch"] = append(errs["mismatch"], "Username or password incorrect")
 			common.ExecTemplate(w, "login.html", err)
 			return
 		}
 
 		user, err := model.FindOne(creds.Email)
 		if err != nil {
-			// message, _ := json.Marshal(err)
-			w.WriteHeader(http.StatusBadRequest)
-			errs["message"] = append(errs["message"], err.Error())
+			w.WriteHeader(http.StatusNotFound)
+			log.Println(err, "::No user found")
+			errs["mismatch"] = append(errs["mismatch"], "Username or password incorrect")
 			common.ExecTemplate(w, "login.html", errs)
-			// w.Write(message)
 			return
 		}
 
 		matched := common.CheckPasswordHash(creds.Password, user.Password)
 		if err != nil || !matched {
-			log.Println("Username or password Incorrect: ")
+			log.Println(err, "::password mismatch")
 			w.WriteHeader(http.StatusForbidden)
-			// w.Write([]byte(`{"message": "Username or password Incorrect"}`))
 			errs["mismatch"] = append(errs["mismatch"], "Username or password incorrect")
 			common.ExecTemplate(w, "login.html", errs)
 			return
@@ -97,9 +96,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		tokenString, err := token.SignedString(jwtKey)
 
 		if err != nil {
-			log.Println(err)
+			log.Println(err, "token signature error")
 			w.WriteHeader(http.StatusInternalServerError)
-			// w.Write([]byte(`{"message": "An error occured"}`))
 			errs["mismatch"] = append(errs["mismatch"], "An error occured. please try again")
 			common.ExecTemplate(w, "login.html", errs)
 			return
@@ -176,6 +174,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func Auth(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		fmt.Println("HELLOOO")
 		cookie, err := r.Cookie("session")
 		if err != nil {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -218,7 +217,7 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 		data.Name = claims.Name
 
 		r = r.WithContext(ctx)
-		common.ExecTemplate(w, "header.html", data)
+		// common.ExecTemplate(w, "header.html", data)
 		f(w, r)
 	}
 
