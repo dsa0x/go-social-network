@@ -45,7 +45,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	var errs = make(Error)
-	fmt.Println(r.Method)
 
 	if r.Method == http.MethodPost {
 		creds := Credentials{}
@@ -174,7 +173,6 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func Auth(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Println("HELLOOO")
 		cookie, err := r.Cookie("session")
 		if err != nil {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)

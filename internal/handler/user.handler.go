@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -28,14 +27,12 @@ type Profile struct {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("omg")
 	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// var errs = make(Error)
 
 	const cKey = ContextKey("user")
 	loggedUser := r.Context().Value(cKey)
 
-	fmt.Println(loggedUser, "pp")
 	if loggedUser == nil {
 		common.ExecTemplate(w, "index.html", loggedUser)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -135,7 +132,6 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"message": "User not found"}`))
 		return
 	}
-	fmt.Println("shitt", r.Method, "/user/"+params["id"])
 	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
 	return
 }
@@ -159,7 +155,6 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("/user/"+params["id"], "hi")
 	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
 	return
 }

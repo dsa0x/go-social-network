@@ -1,19 +1,7 @@
 body {
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
   height: 100vh;
+  min-width: 420px;
 }
-
-/* .signup {
-  display: flex;
-  flex-direction: column;
-}
-
-.signup div {
-  display: flex;
-  flex-direction: column;
-} */
 
 .profile-img {
   bottom: -2rem;
@@ -22,7 +10,25 @@ body {
 
 @media (min-width: 768px) {
   .profile-img {
-    padding: 4rem;
+    /* padding: 4rem; */
+  }
+}
+@media (max-width: 550px) {
+  .uname {
+    top: -50px;
+    position: absolute;
+    right: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-stats {
+    flex-direction: column;
+    align-items: center;
+    transform: translateY(-25px);
+  }
+  .profile-stats > div {
+    padding-top: 10px;
   }
 }
 

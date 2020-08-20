@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -19,7 +18,6 @@ type HomePosts struct {
 // Home function for home handler
 func Home(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Println(r.Method)
 
 	const cKey = ContextKey("user")
 	user := r.Context().Value(cKey)
