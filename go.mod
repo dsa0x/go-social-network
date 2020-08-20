@@ -3,7 +3,7 @@ module github.com/dsa0x/go-social-network
 go 1.14
 
 require (
-	github.com/cosmtrek/air v1.21.2 // indirect
+	// github.com/cosmtrek/air v1.21.2 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dsa0x/go-esocial v0.0.0-20200815154133-0c309e8e80f3
