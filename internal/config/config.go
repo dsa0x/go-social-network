@@ -3,19 +3,10 @@ package config
 import (
 	"html/template"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
-
-// type db struct {
-// 	host     string `required:"true" envconfig:"DB_HOST"`
-// 	port     string `required:"true" envconfig:"DB_PORT"`
-// 	user     string `required:"true" envconfig:"DB_USER"`
-// 	password string `required:"true" envconfig:"DB_PASS"`
-// 	name     string `required:"true" envconfig:"DB_NAME"`
-// }
 
 type envVars struct {
 	Dbhost     string `required:"true" envconfig:"DB_HOST"`
@@ -35,15 +26,10 @@ var Tpl *template.Template
 
 func init() {
 
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	Tpl = template.Must(template.ParseGlob(wd + "/internal/views/*.html"))
+	Tpl = template.Must(template.ParseGlob("/"))
 
 	//load .env file
-	err = godotenv.Load("././.env")
+	err := godotenv.Load("././.env")
 
 	if err != nil {
 		log.Println("Error loading .env file, falling back to cli passed env")
