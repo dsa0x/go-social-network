@@ -1,46 +1,33 @@
-# Start from golang base image
-FROM golang:alpine as builder
-
-# ENV GO111MODULE=on
-
-# Add Maintainer info
-LABEL maintainer="Dare Samsondeen <dsamsondeen@gmail.com>"
-
-# Install git.
-# Git is required for fetching the dependencies.
+#!/bin/sh
+FROM golang:alpine AS builder
+ADD . /go/src/go-social-network
+WORKDIR /go/src/go-social-network
+# # Git is required for fetching the dependencies.
+# RUN ls
 RUN apk update && apk add --no-cache git
-
-# Set the current working directory inside the container 
-WORKDIR /app
-
-# Copy go mod and sum files 
-COPY go.mod go.sum ./
-
-# Download all dependencies. Dependencies will be cached if the go.mod and the go.sum files are not changed 
-RUN go mod download 
-
-# Copy the source from the current directory to the working Directory inside the container 
+# RUN go get github.com/dsa0x/go-social-network
 COPY . .
+RUN go get
+RUN go install
 
-# Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# # Build the binary.
+# RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .
 
-# Start a new stage from scratch
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+# COPY --from=builder /go/src/go-social-network/main .
 
-WORKDIR /root/app
-
-
-# Copy the Pre-built binary file from the previous stage. Observe we also copied the .env file
-COPY --from=builder /app/main .
-COPY --from=builder /app/.env .   
-
-# WORKDIR /root/app
+# FROM alpine:latest  
+# RUN apk --no-cache add ca-certificates
+# WORKDIR /root/
+# # Copy the Pre-built binary file from the previous stage
+# COPY --from=builder /go/src/go-social-network/main .
+# WORKDIR /go/src/go-social-network/
 
 
-# Expose port 8080 to the outside world
+RUN ls
+ENV PORT=8080
 EXPOSE 8080
-
-#Command to run the executable
-CMD ["./main"]
+ENV WD=/go/src/go-social-network
+# RUN chmod +x ./main
+# CMD ["/go/src/go-social-network/main"]
+ENTRYPOINT ["#!/bin/bash","/go/src/go-social-network"]
