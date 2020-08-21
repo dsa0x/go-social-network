@@ -10,9 +10,10 @@ import (
 )
 
 type HomePosts struct {
-	Posts    []model.Post
-	User     ClaimsCred
-	StringID string
+	Posts          []model.Post
+	User           ClaimsCred
+	ID             string
+	LoggedInUserId string
 }
 
 // Home function for home handler
@@ -43,7 +44,9 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 	posts := HomePosts{}
 	posts.User = user.(ClaimsCred)
-	posts.StringID = strconv.Itoa(int(posts.User.ID))
+	posts.ID = strconv.Itoa(int(posts.User.ID))
+	// posts.ID = posts.User.ID//
+	posts.LoggedInUserId = posts.ID
 	posts.Posts = _posts
 	common.ExecTemplate(w, "index.html", posts)
 

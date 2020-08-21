@@ -72,7 +72,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		matched := common.CheckPasswordHash(creds.Password, user.Password)
 		if err != nil || !matched {
-			log.Println(err, "::password mismatch")
+			log.Println(err, user.ID, user.UserName, "::password mismatch")
 			w.WriteHeader(http.StatusForbidden)
 			errs["mismatch"] = append(errs["mismatch"], "Username or password incorrect")
 			common.ExecTemplate(w, "login.html", errs)
@@ -175,11 +175,13 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		cookie, err := r.Cookie("session")
 		if err != nil {
+			log.Println(err, "Invalid Session")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		var reqToken string
 		if err = secureCookie.Decode("session", cookie.Value, &reqToken); err != nil {
+			log.Println(err, "Invalid Session")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
@@ -189,18 +191,22 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 			return jwtKey, nil
 		})
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
-				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte(`{"message": "Invalid Signature"}`))
-				return
-			}
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(`{"message": "Invalid Authorization"}`))
+			// if err == jwt.ErrSignatureInvalid {
+			// 	//w.WriteHeader(http.StatusUnauthorized)
+			// 	// w.Write([]byte(`{"message": "Invalid Signature"}`))
+			// 	return
+			// }
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			log.Println(err, "Invalid Authorization")
+			// w.WriteHeader(http.StatusBadRequest)
+			// w.Write([]byte(`{"message": "Invalid Authorization"}`))
 			return
 		}
 		if !token.Valid {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"message": "Invalid Authorization"}`))
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			log.Println(err, "Invalid Token")
+			// w.WriteHeader(http.StatusUnauthorized)
+			// w.Write([]byte(`{"message": "Invalid Authorization"}`))
 			return
 		}
 		const cKey = ContextKey("user")

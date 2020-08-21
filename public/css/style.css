@@ -21,6 +21,14 @@ body {
   }
 }
 
+.users-name {
+  text-transform: capitalize;
+}
+
+.users {
+  width: 500px;
+}
+
 @media (max-width: 768px) {
   .profile-stats {
     flex-direction: column;

@@ -1,4 +1,4 @@
-{{template "header" .StringID }} {{if and . .User.Name}}
+{{template "header" .LoggedInUserId }} {{if and . .User.Name}}
 
 <br />
 {{template "_posts" . }}

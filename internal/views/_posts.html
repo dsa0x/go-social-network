@@ -1,4 +1,5 @@
-{{define "_posts"}} {{$loggedInUserID := .User.ID}}
+{{define "_posts"}} {{$loggedInUserID := print .ID}} <br />
+{{$loggedInUserInt := .User.ID}}
 <div class="md:px-6 p-0 w-full sm:max-w-full flex mb-4 h-full">
   <div
     class="bg-gray-200 h-full absolute overflow-hidden md:block sidebar hidden"
@@ -14,8 +15,9 @@
     />
   </div>
   <div class="w-full sm:w-3/4 bg-gray-100 h-full mx-4 sm:mx-auto md:ml-64">
+    {{if eq $loggedInUserID .LoggedInUserId }}
     <div class="m-4">{{template "createpost"}}</div>
-    {{if .Posts}} {{range .Posts}}
+    {{end}} {{if .Posts}} {{range .Posts}}
 
     <div
       class="m-4 border border-solid border-gray-400 bg-white rounded-md p-4 flex flex-col justify-between leading-normal"
@@ -26,12 +28,17 @@
           src="/public/img/profile_pic.svg"
           alt="Avatar"
         />
-        <span class="font-bold">{{.Author}}</span>
-        {{if eq $loggedInUserID .CreatedBy }}
+        <!-- {{$loggedInUserID := print $loggedInUserID}} -->
+        <span class="font-bold capitalize text-indigo-600">{{.Author}}</span>
+        {{if eq $loggedInUserInt .CreatedBy }}
         <form action="" method="post" class="ml-auto cursor-pointer">
           <input type="hidden" name="postId" value="{{.ID}}" />
           <a class="">
-            <button type="submit" name="delete" class="w-4 h-4">
+            <button
+              type="submit"
+              name="delete"
+              class="w-4 h-4 hover:bg-gray-200 outline-none"
+            >
               <img
                 class="w-full h-full"
                 src="/public/img/delete.svg"

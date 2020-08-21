@@ -14,25 +14,30 @@ var Db = config.DB()
 func init() {
 	// defer db.Close()
 	// Db.CreateTable(&User{})
+	Db.DropTableIfExists(&User{})
+	Db.CreateTable(&User{})
 	Db.AutoMigrate(&User{})
 }
 
 // User struct declaration
 type User struct {
 	gorm.Model
-	UserName        string `json:"username"  binding:"required"`
-	Email           string `json:"email"  binding:"required"`
+	UserName        string `json:"username"  binding:"required" gorm:"unique;not null"`
+	Email           string `json:"email"  binding:"required" gorm:"unique;not null"`
 	Friends         []User `gorm:"many2many:friendships;association_jointable_foreignkey:friend_id"`
 	Password        string `json:"password,omitempty"  binding:"required"`
 	ConfirmPassword string `json:"confirmPassword,omitempty"  binding:"required" sql:"-"`
 }
 
-// type Friend struct {
-// 	gorm.Model
-// 	UserName string `json:"username"  binding:"required"`
-// 	Users []User `gorm:"many2many:friendships;"`
-// 	Email    string `json:"email"  binding:"required"`
-// }
+func FetchUsers(users *[]User) error {
+	allUsers := Db.Model(&User{}).Order("user_name asc").Find(&users)
+	if allUsers.Error != nil {
+		log.Println(allUsers.Error)
+		return allUsers.Error
+	}
+
+	return nil
+}
 
 // FindOne finds one user by emails
 func FindOne(email string) (*User, error) {

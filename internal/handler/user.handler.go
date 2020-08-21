@@ -104,7 +104,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	profile.Avatar = "/public/img/" + profile.Avatar
 	profile.Posts = posts
 	profile.User.Name = profile.Username
-	profile.User.ID = user.ID
+	profile.User.ID = loggedInUser.ID
 	profile.LoggedInUserId = strconv.Itoa(int(loggedInUser.ID))
 	profile.LoggedInUsername = loggedInUser.Name
 	profile.PostCount = count
@@ -157,4 +157,26 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/user/"+params["id"], http.StatusSeeOther)
 	return
+}
+
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users := []model.User{}
+	err := model.FetchUsers(&users)
+	if err != nil {
+		common.ExecTemplate(w, "users.html", nil)
+		return
+	}
+
+	const cKey = ContextKey("user")
+	user := r.Context().Value(cKey).(ClaimsCred)
+	userID := strconv.Itoa(int(user.ID))
+	data := struct {
+		LoggedInUserId string
+		Users          []model.User
+	}{
+		userID,
+		users,
+	}
+
+	common.ExecTemplate(w, "users.html", data)
 }
