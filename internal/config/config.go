@@ -1,15 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-
-	"path/filepath"
 )
 
 type envVars struct {
@@ -30,21 +27,15 @@ var Tpl *template.Template
 
 func init() {
 
-	wd := os.Getenv("WD")
-	abs, err := filepath.Abs("./internal/views/users.html")
-	if err == nil {
-		fmt.Println("Absolute:", abs)
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Println(err, "::Unable to get paths")
 	}
-
-	// wd, err := os.Getwd()
-	// if err != nil {
-	// 	log.Println(err, "::Unable to get paths")
-	// }
 
 	Tpl = template.Must(template.ParseGlob(wd + "/internal/views/*.html"))
 
 	//load .env file
-	err = godotenv.Load("././.env")
+	err = godotenv.Load(wd + "/./.env")
 
 	if err != nil {
 		log.Println("Error loading .env file, falling back to cli passed env")

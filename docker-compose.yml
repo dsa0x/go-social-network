@@ -12,13 +12,13 @@ services:
     #   - .:/go/src/go-social-network/
     # working_dir: /go/src/go-social-network/
     # command: ls
-    # depends_on:
-    #   - fullstack-postgres # Uncomment this when using postgres.
+    depends_on:
+      - db # Uncomment this when using postgres.
     networks:
       - fullstack
-  fullstack-postgres:
+  db:
     image: postgres:latest
-    container_name: full_db_postgres
+    container_name: db_postgres
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
@@ -37,7 +37,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     depends_on:
-      - fullstack-postgres
+      - db
     ports:
       - "5050:80"
     networks:
