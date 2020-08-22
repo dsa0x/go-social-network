@@ -13,19 +13,18 @@ var Db = config.DB()
 
 func init() {
 	// defer db.Close()
+	// Db.DropTableIfExists(&User{})
 	// Db.CreateTable(&User{})
-	Db.DropTableIfExists(&User{})
-	Db.CreateTable(&User{})
 	Db.AutoMigrate(&User{})
 }
 
 // User struct declaration
 type User struct {
 	gorm.Model
-	UserName        string `json:"username"  binding:"required" gorm:"unique;not null"`
-	Email           string `json:"email"  binding:"required" gorm:"unique;not null"`
+	UserName        string `json:"username"  binding:"required" gorm:"unique;not null" validate:"required,min=5,max=100"`
+	Email           string `json:"email"  binding:"required" gorm:"unique;not null" validate:"required,min=8,max=100"`
 	Friends         []User `gorm:"many2many:friendships;association_jointable_foreignkey:friend_id"`
-	Password        string `json:"password,omitempty"  binding:"required"`
+	Password        string `json:"password,omitempty"  binding:"required" validate:"required,min=6,max=100"`
 	ConfirmPassword string `json:"confirmPassword,omitempty"  binding:"required" sql:"-"`
 }
 
@@ -69,7 +68,6 @@ func CreateUser(user User) (uint, error) {
 	pass, err := common.HashPassword(user.Password)
 
 	if err != nil {
-		log.Println(err)
 		return user.ID, err
 	}
 	user.Password = string(pass)
@@ -77,7 +75,6 @@ func CreateUser(user User) (uint, error) {
 	var errMessage = createdUser.Error
 
 	if createdUser.Error != nil {
-		log.Println(errMessage)
 		return user.ID, errMessage
 	}
 	return user.ID, nil

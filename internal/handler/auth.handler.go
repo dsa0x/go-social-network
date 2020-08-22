@@ -132,17 +132,24 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		user.UserName = username
 
 		if user.Password == "" || user.Password != user.ConfirmPassword {
-
 			w.WriteHeader(http.StatusNotFound)
-			// w.Write([]byte(`{"message": "Passwords do not match"}`))
 			errs["mismatch"] = append(errs["mismatch"], "Passwords do not match")
 			common.ExecTemplate(w, "signup.html", errs)
 			return
 		}
+
 		id, err := model.CreateUser(user)
 		if err != nil {
 			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			if strings.Contains(err.Error(), `unique constraint "users_user_name_key"`) {
+				errs["mismatch"] = append(errs["mismatch"], "Username already exists")
+			} else if strings.Contains(err.Error(), `unique constraint "users_email_key"`) {
+				errs["mismatch"] = append(errs["mismatch"], "Email already exists")
+			} else {
+				errs["mismatch"] = append(errs["mismatch"], err.Error())
+			}
+			common.ExecTemplate(w, "signup.html", errs)
 			return
 		}
 
