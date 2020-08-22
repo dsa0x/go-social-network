@@ -203,17 +203,15 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 			// 	// w.Write([]byte(`{"message": "Invalid Signature"}`))
 			// 	return
 			// }
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 			log.Println(err, "Invalid Authorization")
-			// w.WriteHeader(http.StatusBadRequest)
-			// w.Write([]byte(`{"message": "Invalid Authorization"}`))
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		if !token.Valid {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			log.Println(err, "Invalid Token")
-			// w.WriteHeader(http.StatusUnauthorized)
-			// w.Write([]byte(`{"message": "Invalid Authorization"}`))
+			w.WriteHeader(http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		const cKey = ContextKey("user")
@@ -228,7 +226,6 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 		data.Name = claims.Name
 
 		r = r.WithContext(ctx)
-		// common.ExecTemplate(w, "header.html", data)
 		f(w, r)
 	}
 
