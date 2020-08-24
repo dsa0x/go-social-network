@@ -6,7 +6,7 @@
   >
     <span
       class="my-2 text-base text-gray-600 px-8 py-4 w-full inline-block text-2xl break-words capitalize"
-      >Welcome, {{ .User.Name}}</span
+      >Welcome, {{ or .User.Name "Guest"}}</span
     >
     <img
       class="w-auto h-full object-cover object-left absolute"
@@ -15,9 +15,9 @@
     />
   </div>
   <div class="w-full sm:w-3/4 bg-gray-100 h-full mx-4 sm:mx-auto md:ml-64">
-    {{if eq $loggedInUserID .LoggedInUserId }}
+    {{if eq $loggedInUserID .LoggedInUserId }} {{if .User.Name}}
     <div class="m-4">{{template "createpost"}}</div>
-    {{end}} {{if .Posts}} {{range .Posts}}
+    {{end}} {{end}} {{if .Posts}} {{range .Posts}}
 
     <div
       class="m-4 border border-solid border-gray-400 bg-white rounded-md p-4 flex flex-col justify-between leading-normal"

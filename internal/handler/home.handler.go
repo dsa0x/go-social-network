@@ -19,13 +19,10 @@ type HomePosts struct {
 // Home function for home handler
 func Home(w http.ResponseWriter, r *http.Request) {
 
+	//get user from context
 	const cKey = ContextKey("user")
 	user := r.Context().Value(cKey)
-	if user == nil {
-		common.ExecTemplate(w, "index.html", user)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		// return
-	}
+
 	deletePostID := r.FormValue("postId")
 	if user != nil && r.Method == http.MethodPost && deletePostID == "" {
 		CreatePost2(w, r, "/", deletePostID)
@@ -42,9 +39,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	posts := HomePosts{}
-	posts.User = user.(ClaimsCred)
-	posts.ID = strconv.Itoa(int(posts.User.ID))
-	posts.LoggedInUserId = posts.ID
+	if user != nil {
+		posts.User = user.(ClaimsCred)
+		posts.ID = strconv.Itoa(int(posts.User.ID))
+		posts.LoggedInUserId = posts.ID
+	}
+
 	posts.Posts = _posts
 	common.ExecTemplate(w, "index.html", posts)
 

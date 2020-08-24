@@ -183,12 +183,12 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("session")
 		if err != nil {
 			log.Println(err, "Invalid Session")
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/guest", http.StatusSeeOther)
 			return
 		}
 		var reqToken string
 		if err = secureCookie.Decode("session", cookie.Value, &reqToken); err != nil {
-			log.Println(err, "Invalid Session")
+			log.Println(err, "Unable to decode session")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
@@ -198,12 +198,6 @@ func Auth(f http.HandlerFunc) http.HandlerFunc {
 			return jwtKey, nil
 		})
 		if err != nil {
-			// if err == jwt.ErrSignatureInvalid {
-			// 	//w.WriteHeader(http.StatusUnauthorized)
-			// 	// w.Write([]byte(`{"message": "Invalid Signature"}`))
-			// 	return
-			// }
-
 			log.Println(err, "Invalid Authorization")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
