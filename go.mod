@@ -19,6 +19,6 @@ require (
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	go.mongodb.org/mongo-driver v1.3.5
-	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
+	golang.org/x/crypto 7b82a4e95df4
 	golang.org/x/sys v0.0.0-20200819171115-d785dc25833f // indirect
 )
