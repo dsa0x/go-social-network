@@ -9,7 +9,7 @@ require (
 	github.com/dsa0x/go-esocial v0.0.0-20200815154133-0c309e8e80f3
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/go-playground/validator/v10 v10.3.0
-	github.com/gorilla/mux v1.7.4
+	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/securecookie v1.1.1
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/gorm v1.9.16
